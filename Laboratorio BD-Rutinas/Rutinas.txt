@@ -1,0 +1,186 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AgregarCliente`(IN `Nom` VARCHAR(20), IN `Ape` VARCHAR(20), IN `mail` VARCHAR(30), IN `Tel` VARCHAR(20))
+BEGIN 
+    INSERT INTO Clientes (Nombre, Apellido, Mail, Telefono) 
+    VALUES (Nom,Ape,mail,Tel); 
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AgregarRepuesto`(IN `Nom` VARCHAR(20), IN `Pre` INT(20), IN `Des` VARCHAR(512), IN `Sto` INT(10))
+BEGIN 
+    INSERT INTO Repuestos (Nombre, Precio, Descripcion, Stock) 
+    VALUES (Nom,Pre,Des,Sto); 
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AgregarTecnicos`(IN `Nom` VARCHAR(20), IN `Ape` VARCHAR(20), IN `mail` VARCHAR(30), IN `Tel` VARCHAR(10))
+BEGIN 
+    INSERT INTO Tecnicos (Nombre, Apellido, Mail, Telefono) 
+    VALUES (Nom,Ape,mail,Tel); 
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AgregarTrabajo`(IN `p_NumOT` INT, IN `p_FechaIngreso` DATE, IN `p_FechaEgreso` DATE, IN `p_ClienteId` INT, IN `p_Precio` FLOAT, IN `p_DescripcionTecnico` VARCHAR(256), IN `p_DescripcionCliente` VARCHAR(256), IN `p_UsuarioId` INT, IN `p_TecnicoId` INT, IN `p_EstadoId` INT)
+BEGIN
+    INSERT INTO Trabajos (NumOT, Fecha_ingreso, Fecha_egreso, Cliente_id, Precio, Descripcion_tecnico, Descripcion_cliente, Usuario_id, Tecnico_id, Estado_id)
+    VALUES (p_NumOT, p_FechaIngreso, p_FechaEgreso, p_ClienteId, p_Precio, p_DescripcionTecnico, p_DescripcionCliente, p_UsuarioId, p_TecnicoId, p_EstadoId);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AgregarUsuario`(IN `nombre` VARCHAR(20), IN `apellido` VARCHAR(20), IN `mail` VARCHAR(30), IN `contrasenia` VARCHAR(30), IN `telefono` VARCHAR(20))
+BEGIN 
+    INSERT INTO Usuarios (Nombre, Apellido, Mail, Contraseña, Telefono) 
+    VALUES (nombre, apellido, mail, contrasenia, telefono); 
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CambiarContrasena`(IN `p_mail` VARCHAR(30), IN `p_telefono` VARCHAR(20), IN `p_nuevaContrasena` VARCHAR(30))
+BEGIN
+    DECLARE usuario_valido INT;
+
+    -- Verificar si existe un usuario con el correo y teléfono proporcionados
+    SELECT COUNT(*)
+    INTO usuario_valido
+    FROM Usuarios
+    WHERE Mail = p_mail
+    AND Telefono = p_telefono;
+
+    -- Si el usuario es válido, actualizamos la contraseña
+    IF usuario_valido = 1 THEN
+        UPDATE Usuarios
+        SET Contraseña = p_nuevaContrasena
+        WHERE Mail = p_mail
+        AND Telefono = p_telefono;
+
+        SELECT 'Contraseña actualizada exitosamente' AS resultado;
+    ELSE
+        SELECT 'Correo o teléfono incorrectos' AS resultado;
+    END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarClientePorApellido`(IN `Ape` VARCHAR(20))
+SELECT * FROM `Clientes` WHERE Apellido=Ape$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarClientePorNombre`(IN `Nomb` VARCHAR(20))
+SELECT * FROM `Clientes` WHERE Nombre=Nomb$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarClientes`()
+SELECT * FROM `Clientes`$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarNombrePorApellido`(IN `Ape` VARCHAR(20))
+SELECT * FROM `Tecnicos` WHERE Apellido=Ape$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarRepuestoPorNombre`(IN `Nom` VARCHAR(20))
+SELECT * FROM Repuestos WHERE Nombre=Nom$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarRepuestos`()
+SELECT * FROM `Repuestos`$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTecnicoPorApellido`(IN `Ape` VARCHAR(20))
+SELECT * FROM Tecnicos WHERE Apellido=Ape$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTecnicoPorNombre`(IN `Nomb` VARCHAR(20))
+SELECT * FROM `Tecnicos` WHERE Nombre=Nomb$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTecnicos`()
+SELECT * FROM Tecnicos$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTrabajos`()
+SELECT NumOT, Fecha_ingreso, Cliente_id, Estado_id, Tecnico_id FROM Trabajos$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTrabajosPorClienteId`(IN `clien` INT)
+SELECT * FROM Trabajos WHERE Cliente_id=clien$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTrabajosPorEstadoId`(IN `est` INT(11))
+SELECT * FROM `Trabajos` WHERE Estado_id=est$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTrabajosPorNumOT`(IN `num` INT)
+SELECT * FROM Trabajos WHERE NumOT=num$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTrabajosPorRangoDeFechaEgreso`(IN `egr1` DATE, IN `egr2` DATE)
+SELECT * 
+FROM Trabajos
+WHERE Fecha_egreso BETWEEN egr1 AND egr2$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTrabajosPorRangoDeFechaIngreso`(IN `ing1` DATE, IN `ing2` DATE)
+SELECT * 
+FROM Trabajos
+WHERE Fecha_ingreso BETWEEN ing1 AND ing2$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTrabajosPorTecnicoId`(IN `tec` INT)
+SELECT * FROM Trabajos WHERE Tecnico_id=tec$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarUsuarioPorApellido`(IN `Ape` VARCHAR(20))
+SELECT Nombre, Apellido, Mail, Telefono FROM Usuarios WHERE Apellido=Ape$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarUsuarios`()
+SELECT id, Nombre, Apellido, Mail, Telefono 
+FROM Usuarios$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarUsuariosPorNombre`(IN `Nom` VARCHAR(20))
+SELECT Nombre, Apellido, Mail, Telefono FROM Usuarios WHERE Nombre=Nom$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `LoginUsuario`(IN `p_mail` VARCHAR(30), IN `p_contrasena` VARCHAR(30))
+BEGIN
+    DECLARE usuario_valido INT;
+
+    -- Verificar si existe un usuario con las credenciales dadas
+    SELECT COUNT(*)
+    INTO usuario_valido
+    FROM Usuarios
+    WHERE Mail = p_mail
+    AND Contrasena = p_contrasena;
+
+    -- Si el usuario es válido, devolver un mensaje de éxito
+    IF usuario_valido = 1 THEN
+        SELECT 'Login exitoso' AS resultado;
+    ELSE
+        SELECT 'Correo o contraseña incorrectos' AS resultado;
+    END IF;
+END$$
+DELIMITER ;
