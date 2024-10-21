@@ -53,7 +53,7 @@ BEGIN
     -- Si el usuario es válido, actualizamos la contraseña
     IF usuario_valido = 1 THEN
         UPDATE Usuarios
-        SET Contraseña = p_nuevaContrasena
+        SET Contrasena = p_nuevaContrasena
         WHERE Mail = p_mail
         AND Telefono = p_telefono;
 
