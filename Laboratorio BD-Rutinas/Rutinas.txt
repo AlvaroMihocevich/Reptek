@@ -33,7 +33,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `AgregarUsuario`(IN `nombre` VARCHAR(20), IN `apellido` VARCHAR(20), IN `mail` VARCHAR(30), IN `contrasenia` VARCHAR(30), IN `telefono` VARCHAR(20))
 BEGIN 
-    INSERT INTO Usuarios (Nombre, Apellido, Mail, Contraseña, Telefono) 
+    INSERT INTO Usuarios (Nombre, Apellido, Mail, Contrasena, Telefono) 
     VALUES (nombre, apellido, mail, contrasenia, telefono); 
 END$$
 DELIMITER ;
@@ -168,19 +168,20 @@ DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `LoginUsuario`(IN `p_mail` VARCHAR(30), IN `p_contrasena` VARCHAR(30))
 BEGIN
     DECLARE usuario_valido INT;
+    DECLARE usuario_rol INT;
 
     -- Verificar si existe un usuario con las credenciales dadas
-    SELECT COUNT(*)
-    INTO usuario_valido
+    SELECT COUNT(*), Rol
+    INTO usuario_valido, usuario_rol
     FROM Usuarios
     WHERE Mail = p_mail
     AND Contrasena = p_contrasena;
 
-    -- Si el usuario es válido, devolver un mensaje de éxito
+    -- Si el usuario es válido, devolver un mensaje de éxito y el rol
     IF usuario_valido = 1 THEN
-        SELECT 'Login exitoso' AS resultado;
+        SELECT 'Login exitoso' AS resultado, usuario_rol AS Rol;
     ELSE
-        SELECT 'Correo o contraseña incorrectos' AS resultado;
+        SELECT 'Correo o contraseña incorrectos' AS resultado, NULL AS Rol;
     END IF;
 END$$
 DELIMITER ;
