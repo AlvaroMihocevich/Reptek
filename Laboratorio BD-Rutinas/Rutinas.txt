@@ -39,6 +39,30 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `BuscarTrabajos`(
+    IN p_NumOT INT,
+    IN p_Fecha_ingreso DATE,
+    IN p_Fecha_egreso DATE,
+    IN p_Descripcion_tecnico VARCHAR(255),
+    IN p_Descripcion_cliente VARCHAR(255),
+    IN p_Estado_id INT,
+    IN p_Tecnico_id INT
+)
+BEGIN
+    SELECT *
+    FROM trabajos
+    WHERE 
+        (p_NumOT IS NULL OR p_NumOT = '' OR NumOT = p_NumOT) AND
+        (p_Fecha_ingreso IS NULL OR p_Fecha_ingreso = '' OR Fecha_ingreso = p_Fecha_ingreso) AND
+        (p_Fecha_egreso IS NULL OR p_Fecha_egreso = '' OR Fecha_egreso = p_Fecha_egreso) AND
+        (p_Descripcion_tecnico IS NULL OR p_Descripcion_tecnico = '' OR Descripcion_tecnico LIKE CONCAT('%', p_Descripcion_tecnico, '%')) AND
+        (p_Descripcion_cliente IS NULL OR p_Descripcion_cliente = '' OR Descripcion_cliente LIKE CONCAT('%', p_Descripcion_cliente, '%')) AND
+        (p_Estado_id IS NULL OR p_Estado_id = '' OR Estado_id = p_Estado_id) AND
+        (p_Tecnico_id IS NULL OR p_Tecnico_id = '' OR Tecnico_id = p_Tecnico_id);
+END$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CambiarContrasena`(IN `p_mail` VARCHAR(30), IN `p_telefono` VARCHAR(20), IN `p_nuevaContrasena` VARCHAR(30))
 BEGIN
     DECLARE usuario_valido INT;
@@ -111,7 +135,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ListarTrabajos`()
-SELECT NumOT, Fecha_ingreso, Cliente_id, Estado_id, Tecnico_id FROM Trabajos$$
+SELECT NumOT, Fecha_ingreso, Fecha_egreso, Descripcion_tecnico, Descripcion_cliente, Estado_id, Tecnico_id FROM Trabajos$$
 DELIMITER ;
 
 DELIMITER $$
